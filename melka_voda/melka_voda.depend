@@ -1,0 +1,24 @@
+# depslib dependency file v1.0
+1636652680 source:d:\dokumentyhdd\cvutfs_mmt\pia 1\melka_voda\data.cpp
+	"Data.h"
+	<cmath>
+	<iostream>
+
+1636642550 d:\dokumentyhdd\cvutfs_mmt\pia 1\melka_voda\data.h
+
+1636643595 source:d:\dokumentyhdd\cvutfs_mmt\pia 1\melka_voda\to_file.cpp
+	"to_file.h"
+	<fstream>
+
+1637067466 d:\dokumentyhdd\cvutfs_mmt\pia 1\melka_voda\to_file.h
+	"data.h"
+	"include/Sit.h"
+	<vector>
+	<fstream>
+
+1636564347 d:\dokumentyhdd\cvutfs_mmt\pia 1\melka_voda\include\sit.h
+	<vector>
+
+1637067503 source:d:\dokumentyhdd\cvutfs_mmt\pia 1\melka_voda\src\sit.cpp
+	"../include/Sit.h"
+
