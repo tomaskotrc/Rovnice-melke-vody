@@ -1,19 +1,19 @@
 #pragma once
+
 class Data
 {
 public:
-	double rho;
-	double rho_u;
-	double e;
+	double phi;
+	double m;
 
-	double p();
-	double a();
+	double h();
 	double u();
 
 	Data();
-	Data(double _rho, double _rho_u, double _p);
+	Data(double _h, double _u);
 	Data F() ;
-	void count_e(double _p);
+	void count_phi(double _h);
+	void count_m(double _u);
 	void display();
 
 	Data operator+ (const Data& B);
@@ -23,6 +23,8 @@ public:
 //
 //	Data operator* (double& k);
 //	Data operator* (const Data& B, const double& k) ;
+
+    double g = 9.80665;
 
 };
 

@@ -7,10 +7,8 @@ void to_file(std::ofstream& file, std::vector<Data> w, Sit S, double t){
         file
         << t << ";"
         << S.xi[i] << ";"
-        << w[i].rho << ";"
-        << w[i].u() << ";"
-        << w[i].e << ";"
-        << w[i].p() << std::endl;
+        << w[i].h() << ";"
+        << w[i].u() << std::endl;
     }
 
 }

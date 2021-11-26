@@ -2,61 +2,57 @@
 #include <cmath>
 #include <iostream>
 
-#define kappa 1.4
-
 Data::Data(){
 }
 
-Data::Data(double _rho, double _rho_u, double _p)
-    : rho(_rho), rho_u(_rho_u) { count_e(_p); }
+Data::Data(double _h, double _u){
+     count_phi(_h);
+     count_m(_u);
+}
 
 
-double Data::p() {
-	return (kappa - 1) * (e - 0.5 * rho_u * u());
+double Data::h() {
+	return phi / g;
 }
 
 double Data::u() {
-	return rho_u / rho;
-}
-
-double Data::a() {
-	return std::sqrt(kappa * p() / rho);
+	return m / (g * h());
 }
 
 Data Data::F() {
 	Data F;
 
-	F.rho = rho_u;
-	F.rho_u = rho_u * u() + p();
-	F.e = u() * (e + p());
+	F.phi = m;
+	F.m = ( std::pow(m, 2)/phi + std::pow(phi, 2)/2 );
 
 	return F;
 }
 
-void Data::count_e(double _p) {
-	e = _p / (kappa - 1) + 0.5 * rho_u * u();
+void Data::count_phi(double _h) {
+	phi = g * _h;
+}
+
+void Data::count_m(double _u){
+    m = g * h() * _u;
 }
 
 void Data::display(){
-    std::cout << "rho = " << rho << std::endl;
-    std::cout << "rho_u = " << rho_u << std::endl;
-    std::cout << "e = " << e << std::endl;
+    std::cout << "phi = " << phi << std::endl;
+    std::cout << "m = " << m << std::endl;
 }
 
 Data Data::operator+(const Data& B) {
 	Data A;
-	A.rho = rho + B.rho;
-	A.rho_u = rho_u + B.rho_u;
-	A.e = e + B.e;
+	A.phi = phi + B.phi;
+	A.m = m + B.m;
 
 	return A;
 }
 
 Data Data::operator-(const Data& B) {
 	Data A;
-	A.rho = rho - B.rho;
-	A.rho_u = rho_u - B.rho_u;
-	A.e = e - B.e;
+	A.phi = phi - B.phi;
+	A.m = m - B.m;
 
 	return A;
 }

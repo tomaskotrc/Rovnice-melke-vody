@@ -10,9 +10,8 @@
 Data operator*(const double& k, const Data& B){
     Data A;
 
-    A.rho = B.rho * k;
-    A.rho_u = B.rho_u * k;
-    A.e = B.e * k;
+    A.phi = B.phi * k;
+    A.m = B.m * k;
 
     return A;
 }
@@ -20,16 +19,14 @@ Data operator*(const double& k, const Data& B){
 Data operator*(const Data& B, const double& k){
     Data A;
 
-    A.rho = B.rho * k;
-    A.rho_u = B.rho_u * k;
-    A.e = B.e * k;
+    A.phi = B.phi * k;
+    A.m = B.m * k;
 
     return A;
 }
 
 int main() {
-	Sit S(0, 1, 10000, 0.3);
-    double k = 3.2;
+	Sit S(0, 1, 5000, 0.5);
 
 	std::vector<Data> w(S.n+1);
 	std::vector<Data> wn(S.n+1);
@@ -37,45 +34,52 @@ int main() {
     //pocatecni podminka
     for (int i=0; i<S.n+1; i++){
         Data Y;
-
         if (S.xi[i] <= S.x_barrier){
-            Y.rho = 1;
-            Y.rho_u = 0;
-            Y.count_e(1);
+            Y.count_phi(0.8);
+            Y.count_m(0);
         } else {
-            Y.rho = 0.125;
-            Y.rho_u = 0.1;
-            Y.count_e(0.1);
+            Y.count_phi(0.2);
+            Y.count_m(0);
         }
         w[i] = Y;
     }
 
-    double t_max = 0.2;
+    double t_max = 0.5;
     double CFL = 0.7;
-    double eps = 0.93;
     double t = 0;
-    double den;
+    double vmax;
     double dt;
     int it = 0;
+    double v_temp;
+
     std::ofstream file("output.txt");
-    file << "t;x;rho;u;e;p" << std::endl;
+    file << "t;x;h;u" << std::endl;
 
     while (t < t_max){
-        den = std::abs(w[0].u()) + w[0].a();
+        if (w[0].u() < 0){
+            vmax = w[0].u() - std::sqrt(w[0].g+ w[0].h());
+        } else {
+            vmax = w[0].u() + std::sqrt(w[0].g+ w[0].h());
+        }
 
         for (int i=0; i<S.n+1; i++){
-            if ((std::abs(w[i].u()) + w[i].a()) > den){
-                den = abs(w[i].u()) + w[i].a();
+            if (w[i].u() < 0){
+                v_temp = std::fabs(w[i].u() - std::sqrt(w[0].g + w[i].h()));
+            } else {
+                v_temp = std::fabs(w[i].u() + std::sqrt(w[0].g + w[i].h()));
+            }
+
+            if (v_temp > vmax){
+                vmax = v_temp;
             }
         }
 
-        dt = CFL * S.dx / den;
+        dt = CFL * S.dx / vmax;
         t += dt;
 
-
         for (int i=1; i<S.n; i++){
-            wn[i] = w[i] - dt/(2*S.dx) * (w[i+1].F() - w[i-1].F()) +
-                0.5 * eps * (w[i+1] - 2*w[i] + w[i-1]);
+            wn[i] = w[i] + 0.5 * ( w[i+1] - 2*w[i] + w[i-1] )
+                    - dt / (2*S.dx) * ( w[i+1].F() - w[i-1].F() ) ;
         }
 
         wn[0] = wn[1];
@@ -89,12 +93,13 @@ int main() {
         }
 
         it++;
+
     }
 
     file.close();
 
     std::ofstream file1("endtime.txt");
-    file1 << "t;x;rho;u;e;p" << std::endl;
+    file1 << "t;x;h;u" << std::endl;
     to_file(file1, w, S, 0);
     file1.close();
 
