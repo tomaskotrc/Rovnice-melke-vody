@@ -9,8 +9,8 @@ public:
 	double h();
 	double u();
 
-	Data();
-	Data(double _h, double _u);
+	Data(); //konstruktor prazdny?
+	Data(double _h, double _u); //konstruktor neprazdny?
 	Data F() ;
 	void count_phi(double _h);
 	void count_m(double _u);
@@ -19,12 +19,6 @@ public:
 	Data operator+ (const Data& B);
 	Data operator- (const Data& B);
 
-//	Data multiply(double& k);
-//
-//	Data operator* (double& k);
-//	Data operator* (const Data& B, const double& k) ;
-
     double g = 9.80665;
 
 };
-
