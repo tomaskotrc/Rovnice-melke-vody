@@ -19,7 +19,7 @@ double Data::u() {
 	return m / (g * h());
 }
 
-Data Data::F() {
+Data Data::F() { //fyzikalni tok
 	Data F;
 
 	F.phi = m;
@@ -56,27 +56,3 @@ Data Data::operator-(const Data& B) {
 
 	return A;
 }
-
-//Data Data::multiply(double& k) {
-//    Data A;
-//
-//    A.rho = k * rho;
-//    A.rho_u = k * rho_u;
-//    A.e = k * e;
-//
-//    return A;
-//}
-//
-//Data Data::operator* (double& k) {
-//    return multiply(k);
-//}
-
-//Data Data::operator* (const Data& B, const double& k) const{
-//    data A;
-//
-//    A.rho = k * B.rho;
-//    A.rho_u = k * B.rho_u;
-//    A.e = k * B.e;
-//
-//    return A;
-//}
