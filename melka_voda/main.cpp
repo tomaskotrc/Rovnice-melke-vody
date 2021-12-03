@@ -29,19 +29,19 @@ Data operator*(const Data& B, const double& k){
 }
 
 int main() {
-	Sit S(0, 5, 500, 2.5);
+	Sit S(0, 5, 5000, 2.5);
 
 	std::vector<Data> w(S.n+1);
 	std::vector<Data> wn(S.n+1);
 	std::vector<Data> w_polovicni_plus(S.n+1);
 	std::vector<Data> w_polovicni_minus(S.n+1);
 
-	fstream soubor_u_LF("u_LF.txt", ios::out); //docasne cteni matlab
+	/*fstream soubor_u_LF("u_LF.txt", ios::out);
 	fstream soubor_h_LF("h_LF.txt", ios::out);
 	fstream soubor_u_LW("u_LW.txt", ios::out);
-	fstream soubor_h_LW("h_LW.txt", ios::out);
+	fstream soubor_h_LW("h_LW.txt", ios::out);*/
 
-    double t_max = 10;
+    double t_max = .5;
     double CFL = 0.7;
     double t = 0;
     double vmax;
@@ -64,11 +64,12 @@ int main() {
 
     std::ofstream file_LF("output_LF.txt");
     file_LF << "t;x;h;u" << std::endl;
+    to_file(file_LF, w, S, t);
 
     while (t < t_max) //Lax-Friedrichs
     {
         if (w[0].u() < 0){
-            vmax = w[0].u() - std::sqrt(w[0].g*w[0].h()); //v odmocnine ma byt krat(??)
+            vmax = w[0].u() - std::sqrt(w[0].g*w[0].h());
         } else {
             vmax = w[0].u() + std::sqrt(w[0].g*w[0].h());
         }
@@ -86,6 +87,10 @@ int main() {
         }
 
         dt = CFL * S.dx / vmax;
+        if ((t + dt) > t_max) {
+            dt = t_max - t;
+        }
+
         t += dt;
 
         for (int i=1; i<S.n; i++){
@@ -93,31 +98,32 @@ int main() {
                     - dt / (2*S.dx) * ( w[i+1].F() - w[i-1].F() ) ;
         }
 
-        wn[0] = wn[1];
+        wn[0] = wn[1]; //Neumannova OP
         wn[S.n] = wn[S.n-1];
 
         w = wn;
 
-        if (it%100 == 0){
+        if (it%50 == 0){
             //std::cout << "Time: " << t << ", dt = " << dt << std::endl;
             to_file(file_LF, w, S, t);
-            for (int i=0; i<S.n+1; i++)
-            {
-                soubor_h_LF<<w[i].h()<<" ";
-                soubor_u_LF<<w[i].u()<<" ";
-            }
-            soubor_h_LF<<"\n";
-            soubor_u_LF<<"\n";
+//            for (int i=0; i<S.n+1; i++)
+//            {
+//                soubor_h_LF<<w[i].h()<<" ";
+//                soubor_u_LF<<w[i].u()<<" ";
+//            }
+//            soubor_h_LF<<"\n";
+//            soubor_u_LF<<"\n";
         }
 
         it++;
 
     }
+    to_file(file_LF, w, S, t);
 
     file_LF.close();
     cout<<"pocet iteraci LF schematem: "<<it;
 
-    std::ofstream file_end_LF("endtime.txt");
+    std::ofstream file_end_LF("endtime_LF.txt");
     file_end_LF << "t;x;h;u" << std::endl;
 
     to_file(file_end_LF, w, S, 0);
@@ -162,16 +168,21 @@ int main() {
         }
 
         dt = CFL * S.dx / vmax;
+        if ((t + dt) > t_max) {
+            dt = t_max - t;
+            }
         t += dt;
 
-        for (int i=0; i<S.n; i++)
-        {
+        for (int i=0; i<S.n; i++){
             w_polovicni_plus[i] = 0.5*w[i] + 0.5*w[i+1] - (dt/2/S.dx)*(w[i+1].F() - w[i].F());
         }
-        for (int i=1; i<S.n+1; i++)
-        {
+
+        for (int i=1; i<S.n+1; i++){
             w_polovicni_minus[i] = 0.5*w[i] + 0.5*w[i-1] - (dt/2/S.dx)*(w[i].F() - w[i-1].F());
         }
+
+        w_polovicni_minus[0] = w_polovicni_minus[1];
+
         for (int i=0; i<S.n; i++)
         {
             wn[i]=w[i] - (dt/S.dx)*(w_polovicni_plus[i].F() - w_polovicni_minus[i].F());
@@ -182,18 +193,18 @@ int main() {
 
         w=wn;
 
-        if (it%100 == 0)
+        if (it%50 == 0)
         {
-            //std::cout << "Time: " << t << ", dt = " << dt << std::endl;
+            std::cout << "Time: " << t << ", dt = " << dt << std::endl;
             to_file(file_LW, w, S, t);
-            for (int i=0; i<S.n+1; i++)
-            {
-                soubor_h_LW<<w[i].h()<<" ";
-                soubor_u_LW<<w[i].u()<<" ";
-            }
-            soubor_h_LW<<"\n";
-            soubor_u_LW<<"\n";
-        }
+//            for (int i=0; i<S.n+1; i++)
+//            {
+//                soubor_h_LW<<w[i].h()<<" ";
+//                soubor_u_LW<<w[i].u()<<" ";
+//            }
+//            soubor_h_LW<<"\n";
+//            soubor_u_LW<<"\n";
+//        }
 
         it++;
 
@@ -202,7 +213,7 @@ int main() {
     file_LW.close();
     cout<<", pocet iteraci LW schematem: "<<it;
 
-    std::ofstream file_end_LW("endtime.txt");
+    std::ofstream file_end_LW("endtime_LW.txt");
     file_end_LW << "t;x;h;u" << std::endl;
 
     to_file(file_end_LW, w, S, 0);
