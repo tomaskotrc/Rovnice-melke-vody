@@ -3,15 +3,16 @@
 class Data
 {
 public:
+    Data();
+	Data(double _h, double _u);
+
 	double phi;
 	double m;
 
 	double h();
 	double u();
+    Data F();
 
-	Data(); //konstruktor prazdny?
-	Data(double _h, double _u); //konstruktor neprazdny?
-	Data F() ;
 	void count_phi(double _h);
 	void count_m(double _u);
 	void display();
@@ -20,5 +21,4 @@ public:
 	Data operator- (const Data& B);
 
     double g = 9.80665;
-
 };
