@@ -104,7 +104,7 @@ int main() {
         w = wn;
 
         if (it%50 == 0){
-            //std::cout << "Time: " << t << ", dt = " << dt << std::endl;
+            std::cout << "Time: " << t << ", dt = " << dt << std::endl;
             to_file(file_LF, w, S, t);
 //            for (int i=0; i<S.n+1; i++)
 //            {
@@ -121,7 +121,7 @@ int main() {
     to_file(file_LF, w, S, t);
 
     file_LF.close();
-    cout<<"pocet iteraci LF schematem: "<<it;
+    cout<<"pocet iteraci LF schematem: "<<it<<endl;
 
     std::ofstream file_end_LF("endtime_LF.txt");
     file_end_LF << "t;x;h;u" << std::endl;
@@ -211,7 +211,7 @@ int main() {
     }
 
     file_LW.close();
-    cout<<", pocet iteraci LW schematem: "<<it;
+    cout<<", pocet iteraci LW schematem: "<<it<<endl;
 
     std::ofstream file_end_LW("endtime_LW.txt");
     file_end_LW << "t;x;h;u" << std::endl;
