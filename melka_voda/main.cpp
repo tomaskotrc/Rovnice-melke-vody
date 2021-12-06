@@ -204,7 +204,7 @@ int main() {
 //            }
 //            soubor_h_LW<<"\n";
 //            soubor_u_LW<<"\n";
-//        }
+        }
 
         it++;
 
